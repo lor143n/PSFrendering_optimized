@@ -1,32 +1,9 @@
 #include <iostream>
 #include <array>
 #include <vector>
+#include <opencv2/core.hpp>
 
 #define ORDER 18
-
-
-class DepthDatabase {
-
-private:
-
-	float depth;
-
-	std::vector<PSF> psfs;
-
-public:
-
-	DepthDatabase(float dep) {
-		this->depth = dep;
-	}
-
-
-	void insertPsf(PSF new_psf) {
-
-
-		this->psfs.push_back(new_psf);
-
-	}
-};
 
 class PSF {
 
@@ -52,7 +29,33 @@ public:
 		}
 	}
 
-
-
-
 };
+
+class DepthDatabase {
+
+private:
+
+	float depth;
+
+	std::vector<PSF> psfs;
+
+public:
+
+	DepthDatabase(float dep) {
+		this->depth = dep;
+	}
+
+
+	void insertPsf(PSF new_psf) {
+
+
+		this->psfs.push_back(new_psf);
+
+	}
+};
+
+int main() {
+
+	std::cout << "Hello World!" << std::endl;
+	return 0;
+}
