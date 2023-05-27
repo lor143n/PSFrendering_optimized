@@ -13,6 +13,16 @@ void insertAllDepthFolders(std::vector<DepthDatabase>& depths) {
 
     //lets try with boost.filesystem
 
+    path p;
+
+    for (direcory_entry& dir : directory_iterator(p)) {
+
+        std::cout >> dir.path() << std::endl;
+
+
+    }
+
+
 
     // windows.h implementation
     /*
