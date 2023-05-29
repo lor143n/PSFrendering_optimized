@@ -3,10 +3,10 @@
 #include <iostream>
 #include <array>
 #include <vector>
-#include <opencv2/core.hpp>
 #include <string.h>
-#include <windows.h>
 #include <boost/filesystem.hpp>
+#include <opencv2/imgcodecs.hpp>
+
 
 using namespace boost::filesystem;
 
@@ -17,22 +17,19 @@ class PSF {
 
 
 private:
-	float centre_of_mass_x;
-	float centre_of_mass_y;
 
-	float kernel[ORDER][ORDER];
+	float m_centre_of_mass_x;
+	float m_centre_of_mass_y;
+
+	cv::Mat m_kernel;
 
 public:
 
-	PSF(float com_x, float com_y) {
-		this->centre_of_mass_x = com_x;
-		this->centre_of_mass_y = com_y;
+	PSF(float com_x, float com_y, cv::Mat& kernel) {
+		m_centre_of_mass_x = com_x;
+		m_centre_of_mass_y = com_y;
 
-		for (short i = 0; i < ORDER; i++) {
-			for (short j = 0; j < ORDER; j++) {
-				kernel[i][j] = 0;
-			}
-		}
+		m_kernel = kernel;
 	}
 
 };

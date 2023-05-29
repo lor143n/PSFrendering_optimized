@@ -31,7 +31,14 @@ void insertAllDepthFolders(path& p, std::vector<DepthDatabase>& depths) {
             for (directory_entry file : directory_iterator(dir)) {
 
                 std::cout << file.path().filename().generic_string() << std::endl;
+                
                 //import .exr and save the kernel in new_depth.insertPSF
+                //set up cameras directories
+                auto psfKer = cv::imread(file.path().generic_string(), cv::IMREAD_GRAYSCALE);
+
+                PSF new_psf(.0, .0, psfKer);
+
+                //PSF constructor do a kernel reference import, verify that outside the brackeys works
             }
 
             depths.push_back(new_depth);
