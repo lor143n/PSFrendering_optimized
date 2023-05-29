@@ -8,6 +8,8 @@
 #include <windows.h>
 #include <boost/filesystem.hpp>
 
+using namespace boost::filesystem;
+
 #define ORDER 18
 
 
@@ -49,11 +51,18 @@ public:
 		m_depth = dep;
 	}
 
+	float getDepth() {
+		return m_depth;
+	}
 
-	void insertPsf(PSF new_psf) {
+	void insertPSF(PSF new_psf) {
 
 		m_psfs.push_back(new_psf);
 	}
 };
 
-std::vector<DepthDatabase> loadPSFs(std::string camera_path);
+std::vector<DepthDatabase> loadPSFs(std::string& camera_path);
+
+void insertAllDepthFolders(path& p, std::vector<DepthDatabase>& depths);
+
+void log(std::string& str);

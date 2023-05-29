@@ -1,60 +1,58 @@
 #include "PSFrendering.h"
 
-std::vector<DepthDatabase> loadPSFs(std::string camera_path) {
-
+std::vector<DepthDatabase> loadPSFs(std::string& camera_path) {
 
 	std::vector<DepthDatabase> psfsDict;
+
+    path p(camera_path);
+
+    if (!exists(p) || !is_directory(p)) {
+        std::cout << "ERROR: path error" << std::endl;
+        return psfsDict;
+    }
+
+    insertAllDepthFolders(p,  psfsDict);
 
 	return psfsDict;
 }
 
 
-void insertAllDepthFolders(std::vector<DepthDatabase>& depths) {
+void insertAllDepthFolders(path& p, std::vector<DepthDatabase>& depths) {
 
     //lets try with boost.filesystem
 
-    path p;
 
-    for (direcory_entry& dir : directory_iterator(p)) {
+    try {\
 
-        std::cout >> dir.path() << std::endl;
+        for (directory_entry& dir : directory_iterator(p)) {
 
+            DepthDatabase new_depth(atof(dir.path().filename().generic_string().c_str()));
 
-    }
+            for (directory_entry file : directory_iterator(dir)) {
 
-
-
-    // windows.h implementation
-    /*
-    WIN32_FIND_DATA data;
-
-    std::wstring path = L"C:\\palle\\*";
-
-    HANDLE hFind = FindFirstFile(path.c_str(), &data);      // DIRECTORY
-
-    path.pop_back();
-
-    if (hFind != INVALID_HANDLE_VALUE) {
-
-        do {
-
-            std::wstring comp = L".";
-            std::wstring comp2 = L"..";
-
-            if (_wcsicmp(data.cFileName, comp.c_str()) == 0 || _wcsicmp(data.cFileName, comp2.c_str()) == 0) {
-                continue;
+                std::cout << file.path().filename().generic_string() << std::endl;
+                //import .exr and save the kernel in new_depth.insertPSF
             }
 
+            depths.push_back(new_depth);
+        }
 
-            std::wstring depWstring = L"";
-            depWstring += data.cFileName;
-            DepthDatabase new_depth = new DepthDatabase(atof(data.c));
-            depths.push_back();
-
-        } while (FindNextFile(hFind, &data));
-
-        FindClose(hFind);
+    } catch (const filesystem_error& ex)
+    {
+        std::cout << ex.what() << std::endl;
     }
-    */
 
+
+
+    for (DepthDatabase& depth : depths) {
+
+        std::cout << depth.getDepth() << std::endl;
+    }
+
+    return;
+
+}
+
+void log(std::string& str) {
+    std::cout << str << std::endl;
 }
