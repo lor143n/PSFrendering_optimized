@@ -18,8 +18,8 @@ class PSF {
 
 private:
 
-	float m_centre_of_mass_x;
-	float m_centre_of_mass_y;
+	double m_centre_of_mass_x;
+	double m_centre_of_mass_y;
 
 	cv::Mat m_kernel;
 
@@ -62,4 +62,4 @@ std::vector<DepthDatabase> loadPSFs(std::string& camera_path);
 
 void insertAllDepthFolders(path& p, std::vector<DepthDatabase>& depths);
 
-void log(std::string& str);
+vector<std::string> splitString(std::string str);

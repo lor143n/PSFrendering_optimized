@@ -19,10 +19,7 @@ std::vector<DepthDatabase> loadPSFs(std::string& camera_path) {
 
 void insertAllDepthFolders(path& p, std::vector<DepthDatabase>& depths) {
 
-    //lets try with boost.filesystem
-
-
-    try {\
+    try {
 
         for (directory_entry& dir : directory_iterator(p)) {
 
@@ -36,7 +33,12 @@ void insertAllDepthFolders(path& p, std::vector<DepthDatabase>& depths) {
                 //set up cameras directories
                 auto psfKer = cv::imread(file.path().generic_string(), cv::IMREAD_GRAYSCALE);
 
-                PSF new_psf(.0, .0, psfKer);
+                file.path().filename();
+
+                double com_x = atof(splitString(file.path().filename().generic_string())[0].c_str());
+                double com_y = atof(splitString(file.path().filename().generic_string())[1].c_str());
+
+                PSF new_psf(com_x, com_y, psfKer);
 
                 //PSF constructor do a kernel reference import, verify that outside the brackeys works
             }
@@ -49,7 +51,7 @@ void insertAllDepthFolders(path& p, std::vector<DepthDatabase>& depths) {
         std::cout << ex.what() << std::endl;
     }
 
-
+    //working test
 
     for (DepthDatabase& depth : depths) {
 
@@ -60,6 +62,22 @@ void insertAllDepthFolders(path& p, std::vector<DepthDatabase>& depths) {
 
 }
 
-void log(std::string& str) {
-    std::cout << str << std::endl;
+vector<std::string> splitString(std::string str) {
+
+    std::vector<std::string> tokens;
+    std::string str_found = "";
+
+    for (auto& x : str) {
+
+        if (x == '-') {
+            tokens.push_back(str_found);
+            str_found = "";
+            continue;
+        }
+            
+        result += x;
+    }
+
+
+    return tokens;
 }
