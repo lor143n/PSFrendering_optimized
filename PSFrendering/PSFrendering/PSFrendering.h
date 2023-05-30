@@ -5,12 +5,14 @@
 #include <vector>
 #include <string.h>
 #include <boost/filesystem.hpp>
+#include <opencv2/core/mat.hpp>
 #include <opencv2/imgcodecs.hpp>
 
 
 using namespace boost::filesystem;
 
 #define ORDER 18
+typedef cv::Point3_<uint8_t> Pixel;
 
 
 class PSF {
@@ -40,9 +42,9 @@ private:
 
 	float m_depth;
 
-	std::vector<PSF> m_psfs;
-
 public:
+
+	std::vector<PSF> m_psfs;
 
 	DepthDatabase(float dep) {
 		m_depth = dep;
@@ -52,14 +54,15 @@ public:
 		return m_depth;
 	}
 
+
 	void insertPSF(PSF new_psf) {
 
 		m_psfs.push_back(new_psf);
 	}
 };
 
-std::vector<DepthDatabase> loadPSFs(std::string& camera_path);
+void loadPSFs(std::string& camera_path, std::vector<DepthDatabase>& psfsDict);
 
 void insertAllDepthFolders(path& p, std::vector<DepthDatabase>& depths);
 
-vector<std::string> splitString(std::string str);
+std::vector<std::string> splitString(std::string str);

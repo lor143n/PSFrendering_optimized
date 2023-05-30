@@ -4,7 +4,7 @@
 int main() {
 
 
-	std::string cameraPath = "E:\\GitHub\\PSFrendering_optimized\\PSFrendering\\lenses";
+	std::string cameraPath = "E:\\GitHub\\PSFrendering_optimized\\PSFrendering\\lenses\\brendel-tessar_21_3.0_2.8";
 	std::string imagePath = "E:\\GitHub\\PSFrendering_optimized\\PSFrendering\\source";
 
 	std::cout << "importing camera from: " << cameraPath << std::endl;
@@ -12,9 +12,10 @@ int main() {
 
 	//measure time
 
-	auto src_image = cv::imread(imagePath, cv::IMREAD_UNCHANGED);
+	//auto src_image = cv::imread(imagePath, cv::IMREAD_UNCHANGED);
 
-	std::vector<DepthDatabase> kernels = loadPSFs(cameraPath);
+	std::vector<DepthDatabase> kernels;
+	loadPSFs(cameraPath, kernels);
 
 	//print loading time
 
