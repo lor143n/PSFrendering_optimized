@@ -1,11 +1,13 @@
 #pragma once
 
 #include <iostream>
+#include <math.h>
 #include <array>
 #include <vector>
 #include <string.h>
 #include <boost/filesystem.hpp>
 #include <opencv2/core/mat.hpp>
+#include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
 
 
@@ -79,9 +81,11 @@ void makePSFsDictionary(path& p, std::vector<DepthDatabase>& depths);
 
 //PSF convolution functions
 
-void psfConvolution(cv::Mat& src_image);
+void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image);
 
 
 //Auxiliary functions
+
+void loadEXR(std::string path, std::array<cv::Mat, 2>& image_result);
 
 std::vector<std::string> splitString(std::string str);

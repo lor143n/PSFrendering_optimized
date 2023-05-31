@@ -54,7 +54,7 @@ void makePSFsDictionary(path& p, std::vector<DepthDatabase>& depths) {
 
 //PSF convolution functions
 
-void psfConvolution(cv::Mat& src_image) {
+void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image) {
 
     /*
     src_image.forEach<Pixel>([](Pixel& p, const int* position) -> void {
@@ -63,15 +63,25 @@ void psfConvolution(cv::Mat& src_image) {
         
     });
     */
-
+    /*
     for (int r = 0; r < src_image.rows; ++r) {
         Pixel* ptr = src_image.ptr<Pixel>(r, 0);
         const Pixel* ptr_end = ptr + src_image.cols;
         for (; ptr != ptr_end; ++ptr) {
-            ptr->x *= 250;
-            ptr->y *= 250;
-            ptr->z *= 250;
+            ptr->x = 255;
+            ptr->y = 255;
+            ptr->z = 255;
         }
+    }
+    */
+
+    for (int i = 0; i < rgb_image.rows; i++) {
+
+        for (int j = 0; j < rgb_image.cols; j++) {
+        
+            //std::cout << src_image.at<cv::Vec3b>(i, j) << std::endl;
+        }
+
     }
 
 }
@@ -79,6 +89,37 @@ void psfConvolution(cv::Mat& src_image) {
 
 
 //Auxiliary functions
+//Import OpenEXR
+void loadEXR(std::string path, std::array<cv::Mat, 2>& image_result) {
+
+    Imf::RgbaInputFile file(path.c_str());
+    Imath::Box2i dw = file.dataWindow();
+    int width = dw.max.x - dw.min.x + 1;
+    int height = dw.max.y - dw.min.y + 1;
+
+    Imf::Array2D<Imf::Rgba> pixels;
+    pixels.resizeErase(height, width);
+
+    file.setFrameBuffer(&pixels[0][0] - dw.min.x - dw.min.y * width, 1, width);
+    file.readPixels(dw.min.y, dw.max.y);
+
+    cv::Mat rgbImage(height, width, CV_32FC3);
+    cv::Mat depthImage(height, width, CV_32FC1);
+
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+
+            const Imf::Rgba& pixel = pixels[i][j];
+            rgbImage.at<cv::Vec3f>(i, j) = cv::Vec3f(pixel.r, pixel.g, pixel.b);
+            depthImage.at<float>(i, j) = pixel.a;
+
+        }
+    }
+
+    image_result[0] = rgbImage;
+    image_result[1] = depthImage;
+
+}
 
 std::vector<std::string> splitString(std::string str) {
 
