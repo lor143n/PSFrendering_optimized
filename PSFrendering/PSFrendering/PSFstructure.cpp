@@ -1,5 +1,7 @@
 #include "PSFrendering.h"
 
+//PSFs Databse construction
+
 void loadPSFs(std::string& camera_path, std::vector<DepthDatabase>& psfsDict) {
 
     path p(camera_path);
@@ -9,32 +11,32 @@ void loadPSFs(std::string& camera_path, std::vector<DepthDatabase>& psfsDict) {
         return;
     }
 
-    insertAllDepthFolders(p,  psfsDict);
+    makePSFsDictionary(p,  psfsDict);
 
 	return;
 }
 
 
-void insertAllDepthFolders(path& p, std::vector<DepthDatabase>& depths) {
+void makePSFsDictionary(path& p, std::vector<DepthDatabase>& depths) {
 
     try {
 
         for (directory_entry& dir : directory_iterator(p)) {
 
-            //bisogna rimuovere il nome depth
-            DepthDatabase new_depth(atof(dir.path().filename().generic_string().c_str()));
+            DepthDatabase new_depth(dir.path().filename().generic_string().c_str());
 
             for (directory_entry file : directory_iterator(dir)) {
 
-                auto psfKer = cv::imread(file.path().generic_string(), cv::IMREAD_GRAYSCALE);
-                double com_x = atof(splitString(file.path().stem().generic_string())[0].c_str());
-                double com_y = atof(splitString(file.path().stem().generic_string())[1].c_str());
+                auto psfKer = cv::imread(file.path().generic_string(), cv::IMREAD_ANYCOLOR | cv::IMREAD_ANYDEPTH);
 
-                PSF new_psf(com_x, com_y, psfKer);
-
-                new_depth.m_psfs.push_back(new_psf);
+                //sostituire atof con qualcosa che converta in float non in double
+                float com_x = atof(splitString(file.path().stem().generic_string())[0].c_str());
+                float com_y = atof(splitString(file.path().stem().generic_string())[1].c_str());
 
                 //PSF constructor do a kernel reference import, verify that outside the brackeys works
+                PSF new_psf(com_x, com_y, psfKer);
+
+                new_depth.insertPSF(new_psf);
             }
 
             depths.push_back(new_depth);
@@ -43,18 +45,40 @@ void insertAllDepthFolders(path& p, std::vector<DepthDatabase>& depths) {
     } catch (const filesystem_error& ex)
     {
         std::cout << ex.what() << std::endl;
-
     }
 
-    //working test
-
-    for (DepthDatabase& depth : depths) {
-        std::cout << depth.getDepth() << std::endl;
-    }
-
+   
     return;
+}
+
+
+//PSF convolution functions
+
+void psfConvolution(cv::Mat& src_image) {
+
+    /*
+    src_image.forEach<Pixel>([](Pixel& p, const int* position) -> void {
+        
+        p.y = 255;
+        
+    });
+    */
+
+    for (int r = 0; r < src_image.rows; ++r) {
+        Pixel* ptr = src_image.ptr<Pixel>(r, 0);
+        const Pixel* ptr_end = ptr + src_image.cols;
+        for (; ptr != ptr_end; ++ptr) {
+            ptr->x *= 250;
+            ptr->y *= 250;
+            ptr->z *= 250;
+        }
+    }
 
 }
+
+
+
+//Auxiliary functions
 
 std::vector<std::string> splitString(std::string str) {
 

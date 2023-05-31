@@ -20,8 +20,8 @@ class PSF {
 
 private:
 
-	double m_centre_of_mass_x;
-	double m_centre_of_mass_y;
+	float m_centre_of_mass_x;
+	float m_centre_of_mass_y;
 
 	cv::Mat m_kernel;
 
@@ -34,35 +34,54 @@ public:
 		m_kernel = kernel;
 	}
 
+	cv::Mat getKernel() {
+
+		return m_kernel;
+
+	}
+
 };
 
 class DepthDatabase {
 
 private:
 
-	float m_depth;
+	std::string m_depth;
+	std::vector<PSF> m_psfs;
 
 public:
 
-	std::vector<PSF> m_psfs;
-
-	DepthDatabase(float dep) {
+	DepthDatabase(std::string dep) {
 		m_depth = dep;
 	}
 
-	float getDepth() {
+	std::string getDepth() {
 		return m_depth;
 	}
-
 
 	void insertPSF(PSF new_psf) {
 
 		m_psfs.push_back(new_psf);
 	}
+
+	void testPrint() {
+
+		std::cout << m_psfs[0].getKernel() << std::endl;
+	}
 };
+
+//PSFs Databse construction
 
 void loadPSFs(std::string& camera_path, std::vector<DepthDatabase>& psfsDict);
 
-void insertAllDepthFolders(path& p, std::vector<DepthDatabase>& depths);
+void makePSFsDictionary(path& p, std::vector<DepthDatabase>& depths);
+
+
+//PSF convolution functions
+
+void psfConvolution(cv::Mat& src_image);
+
+
+//Auxiliary functions
 
 std::vector<std::string> splitString(std::string str);
