@@ -11,7 +11,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <OpenEXR/ImfRgbaFile.h>
 #include <OpenEXR/ImfArray.h>
-//#include <Imath>
+#include <Imath/ImathBox.h>
 
 
 using namespace boost::filesystem;

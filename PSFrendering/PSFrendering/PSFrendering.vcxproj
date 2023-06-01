@@ -116,13 +116,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\libraries\boost_1_82_0;E:\libraries\opencv\build\include;E:\libraries\openexr\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\libraries\boost_1_82_0;E:\libraries\opencv\build\include;E:\libraries\openexr\include;E:\libraries\imath\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opencv_world470d.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\libraries\boost_1_82_0\stage\lib;E:\libraries\opencv\build\x64\vc16\lib;E:\libraries\openexr\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\libraries\imath\lib;E:\libraries\boost_1_82_0\stage\lib;E:\libraries\opencv\build\x64\vc16\lib;E:\libraries\openexr\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\libraries\boost_1_82_0;E:\libraries\opencv\build\include;E:\libraries\openexr\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\libraries\boost_1_82_0;E:\libraries\opencv\build\include;E:\libraries\openexr\include;E:\libraries\imath\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,7 +141,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opencv_world470.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\libraries\boost_1_82_0\stage\lib;E:\libraries\opencv\build\x64\vc16\lib;E:\libraries\openexr\lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\libraries\imath\lib;E:\libraries\boost_1_82_0\stage\lib;E:\libraries\opencv\build\x64\vc16\lib;E:\libraries\openexr\lib;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
