@@ -93,6 +93,7 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image) {
 void loadEXR(std::string path, std::array<cv::Mat, 2>& image_result) {
 
     Imf::RgbaInputFile file(path.c_str());
+
     Imath::Box2i dw = file.dataWindow();
     int width = dw.max.x - dw.min.x + 1;
     int height = dw.max.y - dw.min.y + 1;

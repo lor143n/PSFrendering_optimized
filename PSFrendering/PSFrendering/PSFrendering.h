@@ -9,6 +9,9 @@
 #include <opencv2/core/mat.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
+#include <OpenEXR/ImfRgbaFile.h>
+#include <OpenEXR/ImfArray.h>
+//#include <Imath>
 
 
 using namespace boost::filesystem;
