@@ -12,7 +12,8 @@
 #include <OpenEXR/ImfRgbaFile.h>
 #include <OpenEXR/ImfArray.h>
 #include <Imath/ImathBox.h>
-
+#include <Imath/half.h>
+#include <Imath/ImathVec.h>
 
 using namespace boost::filesystem;
 
