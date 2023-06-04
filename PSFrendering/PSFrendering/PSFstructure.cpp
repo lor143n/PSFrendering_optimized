@@ -119,7 +119,6 @@ void loadEXR(std::string path, std::array<cv::Mat, 2>& image_result) {
 
     image_result[0] = rgbImage;
     image_result[1] = depthImage;
-
 }
 
 std::vector<std::string> splitString(std::string str) {
