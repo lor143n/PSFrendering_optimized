@@ -2,26 +2,16 @@
 
 //PSFs Databse construction
 
-void loadPSFs(std::string& camera_path, std::vector<DepthDatabase>& psfsDict) {
+void loadPSFs(path camera_path, std::vector<DepthDatabase>& psfsDict) {
 
-    path p(camera_path);
-
-    if (!exists(p) || !is_directory(p)) {
+    if (!exists(camera_path) || !is_directory(camera_path)) {
         std::cout << "ERROR: path error" << std::endl;
         return;
     }
 
-    makePSFsDictionary(p,  psfsDict);
-
-	return;
-}
-
-
-void makePSFsDictionary(path& p, std::vector<DepthDatabase>& depths) {
-
     try {
 
-        for (directory_entry& dir : directory_iterator(p)) {
+        for (directory_entry& dir : directory_iterator(camera_path)) {
 
 
             double depth_value = ::atof(dir.path().filename().generic_string().c_str());
@@ -33,9 +23,9 @@ void makePSFsDictionary(path& p, std::vector<DepthDatabase>& depths) {
                 auto psfKer = cv::imread(file.path().generic_string(), cv::IMREAD_ANYCOLOR | cv::IMREAD_ANYDEPTH);
 
                 //sostituire atof con qualcosa che converta in float non in double
-                char* ending;
-                float com_x = strtof(splitString(file.path().stem().generic_string())[0].c_str(), &ending);
-                float com_y = strtof(splitString(file.path().stem().generic_string())[1].c_str(), &ending);
+
+                float com_x = std::stof(splitString(file.path().stem().string())[0].c_str());
+                float com_y = std::stof(splitString(file.path().stem().string())[1].c_str());
 
                 //PSF constructor do a kernel reference import, verify that outside the brackeys works
                 PSF new_psf(com_x, com_y, psfKer);
@@ -43,16 +33,16 @@ void makePSFsDictionary(path& p, std::vector<DepthDatabase>& depths) {
                 new_depth.insertPSF(new_psf);
             }
 
-            depths.push_back(new_depth);
+            psfsDict.push_back(new_depth);
         }
 
-    } catch (const filesystem_error& ex)
+    }
+    catch (const filesystem_error& ex)
     {
         std::cout << ex.what() << std::endl;
     }
 
-   
-    return;
+	return;
 }
 
 

@@ -80,15 +80,11 @@ public:
 
 //PSFs Databse construction
 
-void loadPSFs(std::string& camera_path, std::vector<DepthDatabase>& psfsDict);
-
-void makePSFsDictionary(path& p, std::vector<DepthDatabase>& depths);
-
+void loadPSFs(path camera_path, std::vector<DepthDatabase>& psfsDict);
 
 //PSF convolution functions
 
 void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image, std::vector<DepthDatabase> data, int krnl_size);
-
 
 //Auxiliary functions
 
