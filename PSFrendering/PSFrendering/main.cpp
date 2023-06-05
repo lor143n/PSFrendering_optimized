@@ -29,7 +29,7 @@ int main() {
 
 	std::cout << "PSF convolution..." << std::endl;
 
-	psfConvolution(src_image[0], src_image[1]);
+	//psfConvolution(src_image[0], src_image[1]);
 
 	cv::imwrite("E:\\GitHub\\PSFrendering_optimized\\PSFrendering\\out\\res.jpg", src_image);
 }

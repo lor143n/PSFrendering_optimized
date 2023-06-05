@@ -1,5 +1,7 @@
 #pragma once
 
+#define  IMATH_HALF_NO_LOOKUP_TABLE
+
 #include <iostream>
 #include <math.h>
 #include <array>
@@ -85,7 +87,7 @@ void makePSFsDictionary(path& p, std::vector<DepthDatabase>& depths);
 
 //PSF convolution functions
 
-void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image);
+void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image, std::vector<DepthDatabase> data, int krnl_size);
 
 
 //Auxiliary functions

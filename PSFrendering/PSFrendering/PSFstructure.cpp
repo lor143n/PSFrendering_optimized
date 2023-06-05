@@ -56,7 +56,7 @@ void makePSFsDictionary(path& p, std::vector<DepthDatabase>& depths) {
 
 void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image, std::vector<DepthDatabase> data, int krnl_size) {
 
-
+    /*
     int krnl_range = (krnl_size - 1) / 2;
     
 
@@ -108,7 +108,6 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
                     float high_depth = data[high_dep_idx].getDepth();
                     float low_depth = data[low_dep_idx].getDepth();
 
-
                     //Position Selection
 
                     //Interpolation (by Position and by Depth)
@@ -134,7 +133,7 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
         }
 
     }
-
+    */
 }
 
 
