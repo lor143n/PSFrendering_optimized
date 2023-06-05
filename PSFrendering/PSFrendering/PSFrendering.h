@@ -54,16 +54,16 @@ class DepthDatabase {
 
 private:
 
-	std::string m_depth;
+	double m_depth;
 	std::vector<PSF> m_psfs;
 
 public:
 
-	DepthDatabase(std::string dep) {
+	DepthDatabase(double dep) {
 		m_depth = dep;
 	}
 
-	std::string getDepth() {
+	double getDepth() {
 		return m_depth;
 	}
 

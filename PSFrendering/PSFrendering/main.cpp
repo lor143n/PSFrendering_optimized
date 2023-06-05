@@ -13,7 +13,6 @@ int main() {
 	loadPSFs(cameraPath, kernels);
 
 	std::cout << "Done." << std::endl;
-
 	std::cout << "importing image from: " << imagePath << std::endl;
 
 	//import and iteration of exr file with depth value
@@ -24,7 +23,6 @@ int main() {
 	std::cout << "Done." << std::endl;
 
 	//kernels[0].testPrint();
-
 	//image padding (how to do with OpenCV?)
 
 	std::cout << "PSF convolution..." << std::endl;
