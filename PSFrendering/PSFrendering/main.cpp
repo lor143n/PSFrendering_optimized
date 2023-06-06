@@ -4,6 +4,12 @@
 int main() {
 
 
+	/*-----------------------------------------------------
+	----------- LOADING SOURCE IMAGE AND PSFs -------------
+	-------------------------------------------------------*/
+
+	auto start = std::chrono::high_resolution_clock::now();
+
 	path cameraPath("E:\\GitHub\\lenses\\brendel-tessar_21_3.0_2.8");
 	path imagePath("E:\\GitHub\\test\\rabbits_canon-zoom.exr");
 
@@ -12,24 +18,46 @@ int main() {
 	std::vector<DepthDatabase> kernels;
 	loadPSFs(cameraPath, kernels);
 
-	std::cout << "Done." << std::endl;
 	std::cout << "importing image from: " << imagePath << std::endl;
+	std::cout << "Loading PSFs nedeed"<< std::endl;
 
-	//import and iteration of exr file with depth value
 
 	std::array<cv::Mat, 2> src_image;
-
-
 	loadEXR(imagePath.string(), src_image);
 
-	std::cout << "Done." << std::endl;
 
-	//kernels[0].testPrint();
-	//image padding (how to do with OpenCV?)
+	auto end = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-	std::cout << "PSF convolution..." << std::endl;
+	std::cout << "Done. Execution time: " << duration << " milliseconds." << std::endl;
+	std::cout << "Start PSF convolution..." << std::endl;
 
-	//psfConvolution(src_image[0], src_image[1]);
 
-	cv::imwrite("E:\\GitHub\\PSFrendering_optimized\\PSFrendering\\out\\res.jpg", src_image[0]);
+	/*-----------------------------------------------------
+	----------- PSF CONVOLUTION ---------------------------
+	------------ Debug: 19.10 minuti ----------------------
+	------------ Release: 3 seconds -----------------------
+	-------------------------------------------------------*/
+
+	start = std::chrono::high_resolution_clock::now();
+
+	cv::Mat out_image(src_image[0].rows, src_image[0].cols, CV_32FC3);
+
+	psfConvolution(src_image[0], src_image[1], out_image, kernels, 21);
+
+	end = std::chrono::high_resolution_clock::now();
+
+	duration = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+
+	std::cout << "Done. Execution time: " << duration << " seconds." << std::endl;
+
+
+
+
+	/*-----------------------------------------------------
+	----------- EXPORT ------------------------------------
+	-------------------------------------------------------*/
+
+	saveEXR("E:\\GitHub\\PSFrendering_optimized\\PSFrendering\\out\\res.exr", out_image);
+
 }

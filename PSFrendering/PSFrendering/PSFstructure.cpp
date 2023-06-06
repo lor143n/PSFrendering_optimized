@@ -52,18 +52,17 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
 
     int krnl_range = (krnl_size - 1) / 2;
     
+    cv::Mat krnl(krnl_size, krnl_size, CV_32FC1);
 
+    #pragma omp parallel for
     for (int i = krnl_range; i < rgb_image.rows - krnl_range; i++) {
-
         for (int j = krnl_range; j < rgb_image.cols - krnl_range ; j++) {
         
-            //std::cout << src_image.at<cv::Vec3b>(i, j) << std::endl;
 
             //KERNEL BUILDING
-
-            cv::Mat krnl;
             float krnl_sum = 1;
-
+            
+            #pragma omp parallel for
             for (int h = 0; h < krnl_size; h++) {
                 for (int k = 0; k < krnl_size; k++) {
 
@@ -73,7 +72,7 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
                     int high_dep_idx = 0;
                     int low_dep_idx = 0;
 
-                    float dep = depth_image.at<cv::float16_t>(i - krnl_range + h, j - krnl_range + k);
+                    float dep = depth_image.at<float>(i - krnl_range + h, j - krnl_range + k);
 
                     for (int dep_idx = 0; dep_idx < data.size(); dep_idx++) {
 
@@ -105,10 +104,11 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
 
                     //Interpolation (by Position and by Depth)
 
+                    krnl.at<float>(h, k) = 1;
 
                 }
             }
-
+            
 
             //Kernel normalization
             krnl = krnl / krnl_sum;
@@ -118,10 +118,13 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
             for (int x = 0; x < krnl_size; x++) {
                 for (int y = 0; y < krnl_size; y++) {
 
-                    out_image.at<cv::Vec3f>(i - krnl_range, j - krnl_range) = krnl.at<cv::float16_t>(x, y) * rgb_image.at<cv::Vec3f>(i - krnl_range + x, j - krnl_range + y);
+                    out_image.at<cv::Vec3f>(i - krnl_range, j - krnl_range) = krnl.at<float>(x, y) * rgb_image.at<cv::Vec3f>(i - krnl_range + x, j - krnl_range + y);
                 
                 }
             }
+
+
+            out_image.at<cv::Vec3f>(i-krnl_range,j-krnl_range) = rgb_image.at<cv::Vec3f>(i,j);
 
         }
 
@@ -165,22 +168,29 @@ void loadEXR(std::string path, std::array<cv::Mat, 2>& image_result) {
 
 void saveEXR(const char fileName[], const cv::Mat& image)
 {
+    int width = image.cols;
+    int height = image.rows;
 
-    Imf::Array2D<Imf::Rgba> pixels;
-    pixels.resizeErase(image.rows, image.cols);
+    Imf::Rgba* pixels = new Imf::Rgba[width * height];
 
     for (int i = 0; i < image.rows; i++) {
         for (int j = 0; j < image.cols; j++) {
 
-            //assign pixels[i][j].r
+            cv::Vec3f src_pixel = image.at<cv::Vec3f>(i, j);
+
+            pixels[i * width + j].r = src_pixel[0];
+            pixels[i * width + j].g = src_pixel[1];
+            pixels[i * width + j].b = src_pixel[2];
+            pixels[i * width + j].a = 1;
 
         }
     }
 
-
     Imf::RgbaOutputFile file(fileName, image.cols , image.rows, Imf::WRITE_RGBA); 
-    file.setFrameBuffer(&pixels[0][0], 1, image.cols); //?
-    file.writePixels(image.rows);                                
+    file.setFrameBuffer(pixels, 1, image.cols); //?
+    file.writePixels(image.rows);  
+
+
 }
 
 

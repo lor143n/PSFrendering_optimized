@@ -16,6 +16,8 @@
 #include <ImathBox.h>
 #include <half.h>
 #include <ImathVec.h>
+#include <omp.h>
+#include <chrono>
 
 using namespace boost::filesystem;
 
@@ -89,5 +91,7 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
 //Auxiliary functions
 
 void loadEXR(std::string path, std::array<cv::Mat, 2>& image_result);
+
+void saveEXR(const char fileName[], const cv::Mat& image);
 
 std::vector<std::string> splitString(std::string str);
