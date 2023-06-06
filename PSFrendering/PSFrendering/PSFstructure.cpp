@@ -163,6 +163,28 @@ void loadEXR(std::string path, std::array<cv::Mat, 2>& image_result) {
     image_result[1] = depthImage;
 }
 
+void saveEXR(const char fileName[], const cv::Mat& image)
+{
+
+    Imf::Array2D<Imf::Rgba> pixels;
+    pixels.resizeErase(image.rows, image.cols);
+
+    for (int i = 0; i < image.rows; i++) {
+        for (int j = 0; j < image.cols; j++) {
+
+            //assign pixels[i][j].r
+
+        }
+    }
+
+
+    Imf::RgbaOutputFile file(fileName, image.cols , image.rows, Imf::WRITE_RGBA); 
+    file.setFrameBuffer(&pixels[0][0], 1, image.cols); //?
+    file.writePixels(image.rows);                                
+}
+
+
+
 std::vector<std::string> splitString(std::string str) {
 
     std::vector<std::string> tokens;
