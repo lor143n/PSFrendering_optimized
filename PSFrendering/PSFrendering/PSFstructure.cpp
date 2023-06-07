@@ -36,13 +36,21 @@ void loadPSFs(path camera_path, std::vector<DepthDatabase>& psfsDict) {
             psfsDict.push_back(new_depth);
         }
 
+        std::sort(psfsDict.begin(), psfsDict.end());
+        
     }
     catch (const filesystem_error& ex)
     {
         std::cout << ex.what() << std::endl;
     }
 
+
+
 	return;
+}
+
+bool operator<(const DepthDatabase& a, const DepthDatabase& b) {
+    return a.m_depth < b.m_depth;
 }
 
 
@@ -60,7 +68,7 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
         
 
             //KERNEL BUILDING
-            float krnl_sum = 1;
+            float krnl_sum = 0;
             
             #pragma omp parallel for
             for (int h = 0; h < krnl_size; h++) {
@@ -94,7 +102,6 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
                             low_dep_idx = dep_idx;
                             break;
                         }
-
                     }
 
                     double high_depth = data[high_dep_idx].getDepth();
@@ -102,9 +109,87 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
 
                     //Position Selection
 
+                    std::vector<PSF> low_positions_krnls;
+                    std::vector<PSF> high_positions_krnls;
+
+                    //low
+
+                    for (int psf_idx = 0; psf_idx < data[low_dep_idx].m_psfs.size(); psf_idx++) {
+
+                        data[low_dep_idx].m_psfs[psf_idx].m_distance = std::sqrt(std::powl((i - data[low_dep_idx].m_psfs[psf_idx].m_centre_of_mass_x), 2) + std::pow((j - data[low_dep_idx].m_psfs[psf_idx].m_centre_of_mass_y), 2));
+
+                        if (psf_idx == 0) {
+                            low_positions_krnls.push_back(data[low_dep_idx].m_psfs[psf_idx]);
+                        }
+                        else if (psf_idx < INTERPOLATION_COUNT) {
+
+                            bool done = false;
+                            for (int count = 0; count < psf_idx; count++) {
+
+                                if (data[low_dep_idx].m_psfs[psf_idx].m_distance < low_positions_krnls[0].m_distance) {
+                                    low_positions_krnls.insert(low_positions_krnls.begin(), data[low_dep_idx].m_psfs[psf_idx]);
+                                    done = true;
+                                    break;
+                                }
+
+                                if (!done)
+                                    low_positions_krnls.push_back(data[low_dep_idx].m_psfs[psf_idx]);
+
+                            }
+                        }
+                        else
+                        {
+                            for (int count = 0; count < psf_idx; count++) {
+                                if (data[high_dep_idx].m_psfs[psf_idx].m_distance < low_positions_krnls[0].m_distance) {
+                                    low_positions_krnls.insert(low_positions_krnls.begin(), data[high_dep_idx].m_psfs[psf_idx]);
+                                    break;
+                                }
+                            }
+                        }
+
+                    }
+
+                    //high
+
+                    for (int psf_idx = 0; psf_idx < data[high_dep_idx].m_psfs.size(); psf_idx++) {
+
+                        data[high_dep_idx].m_psfs[psf_idx].m_distance = std::sqrt(std::powl((i - data[high_dep_idx].m_psfs[psf_idx].m_centre_of_mass_x), 2) + std::pow((j - data[high_dep_idx].m_psfs[psf_idx].m_centre_of_mass_y), 2));
+
+                        if (psf_idx == 0) {
+                            high_positions_krnls.push_back(data[high_dep_idx].m_psfs[psf_idx]);
+                        }
+                        else if (psf_idx < INTERPOLATION_COUNT) {
+
+                            bool done = false;
+                            for (int count = 0; count < psf_idx; count++) {
+
+                                if (data[high_dep_idx].m_psfs[psf_idx].m_distance < high_positions_krnls[0].m_distance) {
+                                    high_positions_krnls.insert(high_positions_krnls.begin(), data[high_dep_idx].m_psfs[psf_idx]);
+                                    done = true;
+                                    break;
+                                }
+
+                                if (!done)
+                                    high_positions_krnls.push_back(data[high_dep_idx].m_psfs[psf_idx]);
+
+                            }
+                        }
+                        else
+                        {
+                            for (int count = 0; count < psf_idx; count++) {
+                                if (data[high_dep_idx].m_psfs[psf_idx].m_distance < high_positions_krnls[0].m_distance) {
+                                    high_positions_krnls.insert(high_positions_krnls.begin(), data[high_dep_idx].m_psfs[psf_idx]);
+                                    break;
+                                }
+                            }
+                        }
+
+                    }
+
                     //Interpolation (by Position and by Depth)
 
-                    krnl.at<float>(h, k) = 1;
+                    krnl.at<float>(h, k) = data[high_dep_idx].m_psfs[0].m_kernel.at<float>(h,k);
+                    krnl_sum += data[high_dep_idx].m_psfs[0].m_kernel.at<float>(h, k);
 
                 }
             }
@@ -122,9 +207,6 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
                 
                 }
             }
-
-
-            out_image.at<cv::Vec3f>(i-krnl_range,j-krnl_range) = rgb_image.at<cv::Vec3f>(i,j);
 
         }
 
@@ -166,6 +248,8 @@ void loadEXR(std::string path, std::array<cv::Mat, 2>& image_result) {
     image_result[1] = depthImage;
 }
 
+
+
 void saveEXR(const char fileName[], const cv::Mat& image)
 {
     int width = image.cols;
@@ -190,8 +274,8 @@ void saveEXR(const char fileName[], const cv::Mat& image)
     file.setFrameBuffer(pixels, 1, image.cols); //?
     file.writePixels(image.rows);  
 
-
 }
+
 
 
 

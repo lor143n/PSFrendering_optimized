@@ -1,6 +1,6 @@
 #pragma once
 
-#define  IMATH_HALF_NO_LOOKUP_TABLE
+#define IMATH_HALF_NO_LOOKUP_TABLE
 
 #include <iostream>
 #include <math.h>
@@ -18,24 +18,23 @@
 #include <ImathVec.h>
 #include <omp.h>
 #include <chrono>
+#include <algorithm>
 
 using namespace boost::filesystem;
 
-#define ORDER 18
-typedef cv::Point3_<uint8_t> Pixel;
-
+constexpr int ORDER = 7;
+constexpr int INTERPOLATION_COUNT = 4;
 
 class PSF {
 
-
-private:
+public:
 
 	float m_centre_of_mass_x;
 	float m_centre_of_mass_y;
 
 	cv::Mat m_kernel;
 
-public:
+	float m_distance;
 
 	PSF(float com_x, float com_y, cv::Mat& kernel) {
 		m_centre_of_mass_x = com_x;
@@ -44,22 +43,15 @@ public:
 		m_kernel = kernel;
 	}
 
-	cv::Mat getKernel() {
-
-		return m_kernel;
-
-	}
-
 };
 
 class DepthDatabase {
 
-private:
+
+public:
 
 	double m_depth;
 	std::vector<PSF> m_psfs;
-
-public:
 
 	DepthDatabase(double dep) {
 		m_depth = dep;
@@ -72,11 +64,6 @@ public:
 	void insertPSF(PSF new_psf) {
 
 		m_psfs.push_back(new_psf);
-	}
-
-	void testPrint() {
-
-		std::cout << m_psfs[0].getKernel() << std::endl;
 	}
 };
 
@@ -95,3 +82,5 @@ void loadEXR(std::string path, std::array<cv::Mat, 2>& image_result);
 void saveEXR(const char fileName[], const cv::Mat& image);
 
 std::vector<std::string> splitString(std::string str);
+
+bool depth_compare(DepthDatabase& lhs, DepthDatabase& rhs);

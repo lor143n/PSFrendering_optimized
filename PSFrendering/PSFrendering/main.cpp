@@ -21,7 +21,6 @@ int main() {
 	std::cout << "importing image from: " << imagePath << std::endl;
 	std::cout << "Loading PSFs nedeed"<< std::endl;
 
-
 	std::array<cv::Mat, 2> src_image;
 	loadEXR(imagePath.string(), src_image);
 
@@ -43,7 +42,7 @@ int main() {
 
 	cv::Mat out_image(src_image[0].rows, src_image[0].cols, CV_32FC3);
 
-	psfConvolution(src_image[0], src_image[1], out_image, kernels, 21);
+	psfConvolution(src_image[0], src_image[1], out_image, kernels, ORDER);
 
 	end = std::chrono::high_resolution_clock::now();
 
