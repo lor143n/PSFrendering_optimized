@@ -62,8 +62,11 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
     
     cv::Mat krnl(krnl_size, krnl_size, CV_32FC1);
 
-    #pragma omp parallel for
     for (int i = krnl_range; i < rgb_image.rows - krnl_range; i++) {
+        
+        std::cout << i << std::endl;
+
+        #pragma omp parallel for
         for (int j = krnl_range; j < rgb_image.cols - krnl_range ; j++) {
         
 
@@ -72,6 +75,7 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
             
             #pragma omp parallel for
             for (int h = 0; h < krnl_size; h++) {
+                #pragma omp parallel for
                 for (int k = 0; k < krnl_size; k++) {
 
                     //depth selection //convert getDepth() in float
