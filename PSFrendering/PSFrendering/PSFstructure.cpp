@@ -195,6 +195,10 @@ void psfConvolution(cv::Mat& rgb_image, cv::Mat& depth_image, cv::Mat& out_image
                     krnl.at<float>(h, k) = data[high_dep_idx].m_psfs[0].m_kernel.at<float>(h,k);
                     krnl_sum += data[high_dep_idx].m_psfs[0].m_kernel.at<float>(h, k);
 
+
+                    //finish the interpolation and then start optimization with chatgpt
+
+
                 }
             }
             
